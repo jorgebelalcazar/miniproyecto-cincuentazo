@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.cincuentazo.controller.StartController"
+      stylesheets="@../css/styles.css"
+      styleClass="root-container"
+      alignment="CENTER"
+      spacing="25"
+      prefWidth="500"
+      prefHeight="450">
+
+    <padding>
+        <Insets top="40" bottom="40" left="40" right="40"/>
+    </padding>
+
+    <!-- ============== TITLE ============== -->
+    <Label text="Cincuentazo" styleClass="main-title"/>
+    <Label text="Universidad del Valle - Fundamentos de POE" styleClass="subtitle"/>
+
+    <!-- ============== OPPONENT SELECTION ============== -->
+    <Label text="Selecciona contra cuantos jugadores maquina deseas jugar:"
+           styleClass="instruction"
+           wrapText="true"/>
+
+    <HBox alignment="CENTER" spacing="30" styleClass="options-box">
+        <RadioButton fx:id="oneOpponentRadio" text="1 maquina"/>
+        <RadioButton fx:id="twoOpponentsRadio" text="2 maquinas"/>
+        <RadioButton fx:id="threeOpponentsRadio" text="3 maquinas"/>
+    </HBox>
+
+    <!-- ============== START BUTTON ============== -->
+    <Button fx:id="startButton"
+            text="Iniciar Juego"
+            styleClass="primary-button"
+            prefWidth="200"
+            prefHeight="45"/>
+
+    <!-- ============== STATUS LABEL ============== -->
+    <Label fx:id="statusLabel"
+           text="Elige una opcion y pulsa Iniciar."
+           styleClass="status"
+           wrapText="true"/>
+
+</VBox>
