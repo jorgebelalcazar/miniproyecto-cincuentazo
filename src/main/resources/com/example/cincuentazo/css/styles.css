@@ -1,0 +1,72 @@
+/* ================================================================
+   CINCUENTAZO - STYLES
+================================================================ */
+
+/* ============== ROOT CONTAINER ============== */
+.root-container {
+    -fx-background-color: linear-gradient(to bottom, #1e3c2f, #2d5a45);
+    -fx-font-family: "Segoe UI", "Arial", sans-serif;
+}
+
+/* ============== TITLES ============== */
+.main-title {
+    -fx-font-size: 42px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f1c40f;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 4, 0, 0, 2);
+}
+
+.subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #d5dbdb;
+    -fx-font-style: italic;
+}
+
+/* ============== INSTRUCTION ============== */
+.instruction {
+    -fx-font-size: 15px;
+    -fx-text-fill: #ecf0f1;
+    -fx-text-alignment: center;
+}
+
+/* ============== OPTIONS BOX ============== */
+.options-box {
+    -fx-padding: 15;
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-background-radius: 10;
+}
+
+.radio-button {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+}
+
+.radio-button:selected .radio {
+    -fx-background-color: #f1c40f;
+}
+
+/* ============== PRIMARY BUTTON ============== */
+.primary-button {
+    -fx-background-color: #f1c40f;
+    -fx-text-fill: #1e3c2f;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0, 0, 2);
+}
+
+.primary-button:hover {
+    -fx-background-color: #f39c12;
+}
+
+.primary-button:pressed {
+    -fx-background-color: #d68910;
+}
+
+/* ============== STATUS LABEL ============== */
+.status {
+    -fx-font-size: 13px;
+    -fx-text-fill: #f1c40f;
+    -fx-text-alignment: center;
+}
