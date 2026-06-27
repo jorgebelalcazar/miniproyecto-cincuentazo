@@ -10,4 +10,6 @@ module com.example.cincuentazo {
     exports com.example.cincuentazo.controller;
 
     exports com.example.cincuentazo.view;
+
+    exports com.example.cincuentazo.model.card;
 }
