@@ -1,5 +1,8 @@
 package com.example.cincuentazo.model.card;
 
+import com.example.cincuentazo.model.Card;
+import com.example.cincuentazo.model.Rank;
+import com.example.cincuentazo.model.Suit;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -1,4 +1,4 @@
-package com.example.cincuentazo.model.card;
+package com.example.cincuentazo.model;
 
 import java.util.Objects;
 
