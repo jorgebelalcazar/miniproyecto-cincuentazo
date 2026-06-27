@@ -11,5 +11,8 @@ module com.example.cincuentazo {
 
     exports com.example.cincuentazo.view;
 
-    exports com.example.cincuentazo.model.card;
+    exports com.example.cincuentazo.model;
+    exports com.example.cincuentazo.model.game;
+    exports com.example.cincuentazo.model.player;
+    exports com.example.cincuentazo.model.exception;
 }

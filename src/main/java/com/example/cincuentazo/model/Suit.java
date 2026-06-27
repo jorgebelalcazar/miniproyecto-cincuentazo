@@ -1,4 +1,4 @@
-package com.example.cincuentazo.model.card;
+package com.example.cincuentazo.model;
 
 /**
  * Represents the four suits of a standard French-suited deck of cards.
