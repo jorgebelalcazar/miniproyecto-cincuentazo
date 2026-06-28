@@ -9,6 +9,8 @@ import com.example.cincuentazo.model.game.GameLogic;
 import com.example.cincuentazo.model.player.Player;
 import com.example.cincuentazo.view.CardView;
 import com.example.cincuentazo.view.ViewManager;
+import com.example.cincuentazo.concurrency.MachineTurnService;
+import com.example.cincuentazo.model.game.MachineStrategy;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -24,6 +26,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Optional;
 
 /**
  * Controller for the main game view of Cincuentazo.
@@ -88,6 +91,15 @@ public class GameController implements Initializable, CardClickListener {
     /** Whether the human player has already played a card this turn. */
     private boolean humanHasPlayed;
 
+    /** Service that schedules machine turns on background threads. */
+    private final MachineTurnService machineTurnService = new MachineTurnService();
+
+    /** Strategy that decides which card a machine plays. */
+    private final MachineStrategy machineStrategy = new MachineStrategy();
+
+    /** Flag to prevent overlapping turn processing. */
+    private boolean processingTurn;
+
     /**
      * Sets the number of machine opponents and starts the game.
      *
@@ -136,6 +148,7 @@ public class GameController implements Initializable, CardClickListener {
         installKeyboardHandler();
         refreshBoard();
         statusLabel.setText("Tu turno. Selecciona una carta para jugar.");
+
     }
 
     /**
@@ -209,14 +222,18 @@ public class GameController implements Initializable, CardClickListener {
     /**
      * {@inheritDoc}
      * <p>
-     * Reacts to the human player clicking one of their cards: validates the
-     * move, plays it, draws a replacement and updates the board.
+     * Reacts to the human player clicking one of their cards: validates and
+     * plays the move, draws a replacement, and then triggers the machine
+     * players' turns.
      * </p>
      */
     @Override
     public void onCardClicked(Card card) {
-        if (humanHasPlayed) {
-            statusLabel.setText("Ya jugaste. Espera el turno de las maquinas.");
+        if (processingTurn) {
+            return;
+        }
+        if (!gameLogic.getCurrentPlayer().equals(humanPlayer)) {
+            statusLabel.setText("Espera tu turno.");
             return;
         }
 
@@ -224,12 +241,13 @@ public class GameController implements Initializable, CardClickListener {
 
         try {
             gameLogic.playCard(card, chosenValue);
-            humanHasPlayed = true;
-
             gameLogic.drawAndEndTurn();
             refreshBoard();
             statusLabel.setText("Jugaste " + card.getRank().getSymbol()
-                    + ". Suma actual: " + gameLogic.getTable().getCurrentSum());
+                    + ". Suma: " + gameLogic.getTable().getCurrentSum());
+
+            // After the human plays, start the machine turns
+            processNextTurn();
         } catch (InvalidMoveException e) {
             statusLabel.setText("Movimiento invalido: " + e.getMessage());
         } catch (EmptyDeckException e) {
@@ -270,6 +288,89 @@ public class GameController implements Initializable, CardClickListener {
     // ================================================================
     // INNER CLASS FOR KEYBOARD EVENT HANDLING
     // ================================================================
+
+    /**
+     * Processes the next turn. If the game is over, it announces the winner.
+     * If it is the human's turn, it waits for the human's click. If it is a
+     * machine's turn, it schedules the machine's move on a background thread.
+     */
+    private void processNextTurn() {
+        if (gameLogic.isGameOver()) {
+            announceWinner();
+            return;
+        }
+
+        Player current = gameLogic.getCurrentPlayer();
+
+        if (!current.isMachine()) {
+            processingTurn = false;
+            statusLabel.setText("Tu turno. Selecciona una carta.");
+            return;
+        }
+
+        // It is a machine's turn: schedule it on a background thread
+        processingTurn = true;
+        statusLabel.setText(current.getName() + " esta pensando...");
+        machineTurnService.schedulePlay(() -> playMachineTurn(current));
+    }
+
+    /**
+     * Executes a machine player's turn: chooses a move, plays it (or
+     * eliminates the player if no move is possible), draws a card after a
+     * short delay, and then advances to the next turn.
+     *
+     * @param machine the machine player taking its turn
+     */
+    private void playMachineTurn(Player machine) {
+        Optional<MachineStrategy.Move> move =
+                machineStrategy.chooseMove(machine, gameLogic.getTable());
+
+        if (move.isEmpty()) {
+            // The machine cannot play: eliminate it
+            statusLabel.setText(machine.getName() + " no puede jugar y es eliminada.");
+            gameLogic.eliminateCurrentPlayer();
+            refreshBoard();
+            processNextTurn();
+            return;
+        }
+
+        try {
+            gameLogic.playCard(move.get().getCard(), move.get().getValue());
+            refreshBoard();
+            statusLabel.setText(machine.getName() + " jugo una carta. Suma: "
+                    + gameLogic.getTable().getCurrentSum());
+
+            // Schedule drawing a card after 1-2 seconds, then next turn
+            machineTurnService.scheduleDraw(() -> {
+                try {
+                    gameLogic.drawAndEndTurn();
+                    refreshBoard();
+                    processNextTurn();
+                } catch (EmptyDeckException e) {
+                    statusLabel.setText("Mazo agotado: " + e.getMessage());
+                }
+            });
+        } catch (InvalidMoveException e) {
+            // Should not happen because we validated, but handle defensively
+            statusLabel.setText(machine.getName() + " no puede jugar y es eliminada.");
+            gameLogic.eliminateCurrentPlayer();
+            refreshBoard();
+            processNextTurn();
+        }
+    }
+
+    /**
+     * Announces the winner of the game and ends the interaction.
+     */
+    private void announceWinner() {
+        processingTurn = false;
+        Player winner = gameLogic.getWinner();
+        if (winner.equals(humanPlayer)) {
+            statusLabel.setText("Felicidades, ganaste el juego!");
+        } else {
+            statusLabel.setText("Fin del juego. Gano " + winner.getName() + ".");
+        }
+    }
 
     /**
      * Inner class that handles keyboard shortcuts during the game.

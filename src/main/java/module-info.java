@@ -13,6 +13,8 @@ module com.example.cincuentazo {
 
     exports com.example.cincuentazo.view;
 
+    exports com.example.cincuentazo.concurrency;
+
     exports com.example.cincuentazo.model;
     exports com.example.cincuentazo.model.game;
     exports com.example.cincuentazo.model.player;
