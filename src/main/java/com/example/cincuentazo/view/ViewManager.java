@@ -32,6 +32,10 @@ public final class ViewManager {
     private static final String START_VIEW_PATH =
             "/com/example/cincuentazo/view/start-view.fxml";
 
+    /** Classpath location of the game view. */
+    private static final String GAME_VIEW_PATH =
+            "/com/example/cincuentazo/view/game-view.fxml";
+
     /** The single shared instance of this manager. */
     private static final ViewManager INSTANCE = new ViewManager();
 
@@ -70,8 +74,39 @@ public final class ViewManager {
      * Loads and displays the start view, where the player selects how many
      * machine opponents to play against.
      */
-    public void showStartView() {
-        swapScene(START_VIEW_PATH);
+    public void showStartView() {swapScene(START_VIEW_PATH);}
+
+    /**
+     * Loads and displays the game view, passing the chosen number of machine
+     * opponents to its controller.
+     *
+     * @param machineOpponents the number of machine opponents (1, 2 or 3)
+     */
+    public void showGameView(int machineOpponents) {
+        URL resourceUrl = ViewManager.class.getResource(GAME_VIEW_PATH);
+        if (resourceUrl == null) {
+            throw new IllegalStateException(
+                    "No se pudo encontrar el archivo FXML en: " + GAME_VIEW_PATH
+            );
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(resourceUrl);
+            Parent root = loader.load();
+
+            com.example.cincuentazo.controller.GameController controller =
+                    loader.getController();
+            controller.setMachineOpponents(machineOpponents);
+
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+            primaryStage.centerOnScreen();
+            primaryStage.show();
+        } catch (IOException e) {
+            throw new IllegalStateException(
+                    "No se pudo cargar la vista: " + GAME_VIEW_PATH, e
+            );
+        }
     }
 
     /**

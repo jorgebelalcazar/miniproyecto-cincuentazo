@@ -1,14 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
+<BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="$CONTROLLER_NAME$"
-            prefHeight="400.0" prefWidth="600.0" >
+            fx:controller="com.example.cincuentazo.controller.GameController"
+            stylesheets="@../css/styles.css"
+            styleClass="game-root"
+            prefWidth="900"
+            prefHeight="700">
 
-</AnchorPane>
+    <!-- ============== TOP: opponent + back button ============== -->
+    <top>
+        <VBox alignment="CENTER" spacing="5">
+            <padding>
+                <Insets top="10" bottom="5" left="10" right="10"/>
+            </padding>
+            <HBox alignment="CENTER_RIGHT">
+                <Button fx:id="backButton" text="Volver" styleClass="secondary-button"/>
+            </HBox>
+            <Label text="Maquina 2" styleClass="opponent-label"/>
+            <Pane fx:id="topOpponentPane" styleClass="opponent-pane" prefHeight="90"/>
+        </VBox>
+    </top>
+
+    <!-- ============== LEFT: opponent ============== -->
+    <left>
+        <VBox alignment="CENTER" spacing="5">
+            <padding>
+                <Insets top="10" bottom="10" left="10" right="10"/>
+            </padding>
+            <Label text="Maquina 1" styleClass="opponent-label"/>
+            <Pane fx:id="leftOpponentPane" styleClass="opponent-pane" prefWidth="120"/>
+        </VBox>
+    </left>
+
+    <!-- ============== RIGHT: opponent ============== -->
+    <right>
+        <VBox alignment="CENTER" spacing="5">
+            <padding>
+                <Insets top="10" bottom="10" left="10" right="10"/>
+            </padding>
+            <Label text="Maquina 3" styleClass="opponent-label"/>
+            <Pane fx:id="rightOpponentPane" styleClass="opponent-pane" prefWidth="120"/>
+        </VBox>
+    </right>
+
+    <!-- ============== CENTER: table + deck + sum ============== -->
+    <center>
+        <VBox alignment="CENTER" spacing="20" styleClass="table-area">
+            <padding>
+                <Insets top="20" bottom="20" left="20" right="20"/>
+            </padding>
+
+            <Label text="Suma de la mesa" styleClass="sum-caption"/>
+            <Label fx:id="sumLabel" text="0" styleClass="sum-value"/>
+
+            <HBox alignment="CENTER" spacing="40">
+                <!-- Played card on the table -->
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="Mesa" styleClass="zone-caption"/>
+                    <StackPane fx:id="tableCardPane" styleClass="card-slot"/>
+                </VBox>
+                <!-- Draw deck -->
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="Mazo" styleClass="zone-caption"/>
+                    <StackPane fx:id="deckPane" styleClass="card-slot deck-slot"/>
+                </VBox>
+            </HBox>
+        </VBox>
+    </center>
+
+    <!-- ============== BOTTOM: human hand + status ============== -->
+    <bottom>
+        <VBox alignment="CENTER" spacing="10" styleClass="human-area">
+            <padding>
+                <Insets top="10" bottom="15" left="20" right="20"/>
+            </padding>
+            <Label text="Tu mano" styleClass="hand-caption"/>
+            <HBox fx:id="humanHandBox" alignment="CENTER" spacing="10" styleClass="hand-box"/>
+            <Label fx:id="statusLabel" text="Preparando la mesa..."
+                   styleClass="status" wrapText="true"/>
+        </VBox>
+    </bottom>
+
+</BorderPane>
