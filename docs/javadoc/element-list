@@ -1,0 +1,10 @@
+module:com.example.cincuentazo
+com.example.cincuentazo
+com.example.cincuentazo.concurrency
+com.example.cincuentazo.controller
+com.example.cincuentazo.controller.handler
+com.example.cincuentazo.model
+com.example.cincuentazo.model.exception
+com.example.cincuentazo.model.game
+com.example.cincuentazo.model.player
+com.example.cincuentazo.view
