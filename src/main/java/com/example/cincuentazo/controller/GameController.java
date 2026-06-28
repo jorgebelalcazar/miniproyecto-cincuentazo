@@ -1,27 +1,41 @@
 package com.example.cincuentazo.controller;
 
+import com.example.cincuentazo.controller.handler.CardClickListener;
+import com.example.cincuentazo.controller.handler.CardMouseAdapter;
+import com.example.cincuentazo.model.Card;
+import com.example.cincuentazo.model.exception.EmptyDeckException;
+import com.example.cincuentazo.model.exception.InvalidMoveException;
+import com.example.cincuentazo.model.game.GameLogic;
+import com.example.cincuentazo.model.player.Player;
+import com.example.cincuentazo.view.CardView;
+import com.example.cincuentazo.view.ViewManager;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
  * Controller for the main game view of Cincuentazo.
  * <p>
- * This controller wires the game board defined in {@code game-view.fxml}
- * with the game logic. In this phase it only holds the FXML references and
- * displays a placeholder state; the full interaction (dealing cards,
- * handling clicks, machine turns) is added in later phases.
+ * This controller connects the {@link GameLogic} engine with the visual
+ * board. It deals the initial hands, renders the cards, and handles the
+ * human player's interaction through mouse and keyboard events. Machine
+ * turns (with timers) are added in the concurrency phase.
  * </p>
  *
  */
-public class GameController implements Initializable {
+public class GameController implements Initializable, CardClickListener {
 
     /** Container for the top machine opponent. */
     @FXML
@@ -62,40 +76,221 @@ public class GameController implements Initializable {
     /** Number of machine opponents selected on the start screen. */
     private int machineOpponents;
 
+    /** The game engine that holds all the rules and state. */
+    private GameLogic gameLogic;
+
+    /** The human player. */
+    private Player humanPlayer;
+
+    /** The machine players, in display order. */
+    private final List<Player> machinePlayers = new ArrayList<>();
+
+    /** Whether the human player has already played a card this turn. */
+    private boolean humanHasPlayed;
+
     /**
-     * Sets the number of machine opponents chosen by the player on the
-     * start screen. Called by the {@code ViewManager} right after loading
-     * this view.
+     * Sets the number of machine opponents and starts the game.
      *
      * @param machineOpponents the number of machine opponents (1, 2 or 3)
      */
     public void setMachineOpponents(int machineOpponents) {
         this.machineOpponents = machineOpponents;
-        statusLabel.setText(
-                "Juego iniciado con " + machineOpponents
-                        + " maquina(s). "
-        );
+        startGame();
     }
 
     /**
-     * Initialization callback invoked automatically after the FXML view has
-     * been loaded. Wires the back button. Full board setup happens once the
-     * number of opponents is known.
+     * Initialization callback. Wires the back button and keyboard handling.
      *
-     * @param location  the FXML location (provided by JavaFX, unused here)
-     * @param resources the resource bundle (provided by JavaFX, unused here)
+     * @param location  the FXML location (unused)
+     * @param resources the resource bundle (unused)
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        backButton.setOnAction(event -> handleBackToStart());
-        sumLabel.setText("0");
-        statusLabel.setText("Preparando la mesa...");
+        backButton.setOnAction(event -> ViewManager.getInstance().showStartView());
     }
 
     /**
-     * Handles the back button by returning to the start screen.
+     * Builds the players, sets up the game engine, deals the cards and
+     * renders the initial board.
      */
-    private void handleBackToStart() {
-        com.example.cincuentazo.view.ViewManager.getInstance().showStartView();
+    private void startGame() {
+        List<Player> players = new ArrayList<>();
+        humanPlayer = new Player("Tu", false);
+        players.add(humanPlayer);
+
+        for (int i = 1; i <= machineOpponents; i++) {
+            Player machine = new Player("Maquina " + i, true);
+            machinePlayers.add(machine);
+            players.add(machine);
+        }
+
+        gameLogic = new GameLogic(players);
+        try {
+            gameLogic.setupGame();
+        } catch (EmptyDeckException e) {
+            statusLabel.setText("Error al repartir las cartas: " + e.getMessage());
+            return;
+        }
+
+        humanHasPlayed = false;
+        installKeyboardHandler();
+        refreshBoard();
+        statusLabel.setText("Tu turno. Selecciona una carta para jugar.");
+    }
+
+    /**
+     * Redraws the entire board to reflect the current model state.
+     */
+    private void refreshBoard() {
+        renderTable();
+        renderHumanHand();
+        renderMachineHands();
+        sumLabel.setText(String.valueOf(gameLogic.getTable().getCurrentSum()));
+    }
+
+    /**
+     * Renders the top card currently on the table.
+     */
+    private void renderTable() {
+        tableCardPane.getChildren().clear();
+        Card topCard = gameLogic.getTable().getTopCard();
+        tableCardPane.getChildren().add(new CardView(topCard, true));
+    }
+
+    /**
+     * Renders the human player's hand face-up, attaching a mouse adapter to
+     * each card so it can be clicked.
+     */
+    private void renderHumanHand() {
+        humanHandBox.getChildren().clear();
+        for (Card card : humanPlayer.getHand()) {
+            CardView cardView = new CardView(card, true);
+            // Mouse event handling via the Adapter pattern
+            cardView.addEventHandler(MouseEvent.MOUSE_CLICKED,
+                    new CardMouseAdapter(card, this));
+            humanHandBox.getChildren().add(cardView);
+        }
+    }
+
+    /**
+     * Renders the machine players' hands face-down in their panes. Side
+     * opponents (left and right) stack their cards vertically to fit the
+     * narrow lateral space, while the top opponent stacks them horizontally.
+     */
+    private void renderMachineHands() {
+        Pane[] panes = {leftOpponentPane, topOpponentPane, rightOpponentPane};
+        for (int i = 0; i < machinePlayers.size() && i < panes.length; i++) {
+            Pane pane = panes[i];
+            pane.getChildren().clear();
+
+            boolean isSidePane = (pane == leftOpponentPane || pane == rightOpponentPane);
+            int handSize = machinePlayers.get(i).getHandSize();
+
+            if (isSidePane) {
+                // Side opponents: stack cards vertically
+                javafx.scene.layout.VBox column = new javafx.scene.layout.VBox(5);
+                column.setAlignment(javafx.geometry.Pos.CENTER);
+                for (int c = 0; c < handSize; c++) {
+                    column.getChildren().add(new CardView(null, false));
+                }
+                pane.getChildren().add(column);
+            } else {
+                // Top opponent: stack cards horizontally
+                HBox row = new HBox(5);
+                row.setAlignment(javafx.geometry.Pos.CENTER);
+                for (int c = 0; c < handSize; c++) {
+                    row.getChildren().add(new CardView(null, false));
+                }
+                pane.getChildren().add(row);
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Reacts to the human player clicking one of their cards: validates the
+     * move, plays it, draws a replacement and updates the board.
+     * </p>
+     */
+    @Override
+    public void onCardClicked(Card card) {
+        if (humanHasPlayed) {
+            statusLabel.setText("Ya jugaste. Espera el turno de las maquinas.");
+            return;
+        }
+
+        int chosenValue = chooseCardValue(card);
+
+        try {
+            gameLogic.playCard(card, chosenValue);
+            humanHasPlayed = true;
+
+            gameLogic.drawAndEndTurn();
+            refreshBoard();
+            statusLabel.setText("Jugaste " + card.getRank().getSymbol()
+                    + ". Suma actual: " + gameLogic.getTable().getCurrentSum());
+        } catch (InvalidMoveException e) {
+            statusLabel.setText("Movimiento invalido: " + e.getMessage());
+        } catch (EmptyDeckException e) {
+            statusLabel.setText("No hay cartas para tomar: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Chooses the most convenient value for a card. For an Ace, it picks
+     * the highest value that does not exceed the table limit; otherwise it
+     * uses the card's fixed value.
+     *
+     * @param card the card to evaluate
+     * @return the chosen value to play the card with
+     */
+    private int chooseCardValue(Card card) {
+        if (!card.hasFlexibleValue()) {
+            return card.getMaxValue();
+        }
+        // Ace: prefer 10 if it fits, otherwise 1
+        if (gameLogic.getTable().isLegalMove(card.getMaxValue())) {
+            return card.getMaxValue();
+        }
+        return card.getMinValue();
+    }
+
+    /**
+     * Installs the keyboard handler on the scene once it is available.
+     */
+    private void installKeyboardHandler() {
+        humanHandBox.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                newScene.setOnKeyPressed(new KeyboardHandler());
+            }
+        });
+    }
+
+    // ================================================================
+    // INNER CLASS FOR KEYBOARD EVENT HANDLING
+    // ================================================================
+
+    /**
+     * Inner class that handles keyboard shortcuts during the game.
+     * <p>
+     * Implemented as an inner class so it can directly access the
+     * controller's state. Currently it supports returning to the start
+     * screen with the ESCAPE key.
+     * </p>
+     */
+    private class KeyboardHandler implements javafx.event.EventHandler<KeyEvent> {
+
+        /**
+         * Handles a key press event.
+         *
+         * @param event the key event
+         */
+        @Override
+        public void handle(KeyEvent event) {
+            if (event.getCode() == KeyCode.ESCAPE) {
+                ViewManager.getInstance().showStartView();
+            }
+        }
     }
 }
