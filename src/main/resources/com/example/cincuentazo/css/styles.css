@@ -174,3 +174,58 @@
     -fx-text-fill: #f1c40f;
     -fx-text-alignment: center;
 }
+
+/* ================================================================
+   CARD VIEW STYLES
+================================================================ */
+
+.card-view {
+    -fx-min-width: 60;
+    -fx-min-height: 85;
+    -fx-pref-width: 60;
+    -fx-pref-height: 85;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+}
+
+.card-face-up {
+    -fx-background-color: white;
+    -fx-border-color: #2c3e50;
+    -fx-cursor: hand;
+}
+
+.card-face-up:hover {
+    -fx-effect: dropshadow(gaussian, rgba(241, 196, 15, 0.8), 8, 0, 0, 0);
+    -fx-translate-y: -8;
+}
+
+.card-face-down {
+    -fx-background-color: linear-gradient(to bottom right, #34495e, #2c3e50);
+    -fx-border-color: #f1c40f;
+}
+
+.card-red .card-rank,
+.card-red .card-suit {
+    -fx-text-fill: #c0392b;
+}
+
+.card-black .card-rank,
+.card-black .card-suit {
+    -fx-text-fill: #2c3e50;
+}
+
+.card-rank {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+.card-suit {
+    -fx-font-size: 20px;
+}
+
+.card-back-symbol {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f1c40f;
+}
