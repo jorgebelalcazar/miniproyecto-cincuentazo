@@ -38,7 +38,7 @@
                 <Insets top="10" bottom="10" left="10" right="10"/>
             </padding>
             <Label text="Maquina 1" styleClass="opponent-label"/>
-            <Pane fx:id="leftOpponentPane" styleClass="opponent-pane" prefWidth="120"/>
+            <Pane fx:id="leftOpponentPane" styleClass="opponent-pane" prefWidth="100" prefHeight="400"/>
         </VBox>
     </left>
 
@@ -49,7 +49,7 @@
                 <Insets top="10" bottom="10" left="10" right="10"/>
             </padding>
             <Label text="Maquina 3" styleClass="opponent-label"/>
-            <Pane fx:id="rightOpponentPane" styleClass="opponent-pane" prefWidth="120"/>
+            <Pane fx:id="rightOpponentPane" styleClass="opponent-pane"  prefWidth="100" prefHeight="400"/>
         </VBox>
     </right>
 

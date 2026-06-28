@@ -173,18 +173,36 @@ public class GameController implements Initializable, CardClickListener {
     }
 
     /**
-     * Renders the machine players' hands face-down in their panes.
+     * Renders the machine players' hands face-down in their panes. Side
+     * opponents (left and right) stack their cards vertically to fit the
+     * narrow lateral space, while the top opponent stacks them horizontally.
      */
     private void renderMachineHands() {
         Pane[] panes = {leftOpponentPane, topOpponentPane, rightOpponentPane};
         for (int i = 0; i < machinePlayers.size() && i < panes.length; i++) {
             Pane pane = panes[i];
             pane.getChildren().clear();
-            HBox row = new HBox(5);
-            for (int c = 0; c < machinePlayers.get(i).getHandSize(); c++) {
-                row.getChildren().add(new CardView(null, false));
+
+            boolean isSidePane = (pane == leftOpponentPane || pane == rightOpponentPane);
+            int handSize = machinePlayers.get(i).getHandSize();
+
+            if (isSidePane) {
+                // Side opponents: stack cards vertically
+                javafx.scene.layout.VBox column = new javafx.scene.layout.VBox(5);
+                column.setAlignment(javafx.geometry.Pos.CENTER);
+                for (int c = 0; c < handSize; c++) {
+                    column.getChildren().add(new CardView(null, false));
+                }
+                pane.getChildren().add(column);
+            } else {
+                // Top opponent: stack cards horizontally
+                HBox row = new HBox(5);
+                row.setAlignment(javafx.geometry.Pos.CENTER);
+                for (int c = 0; c < handSize; c++) {
+                    row.getChildren().add(new CardView(null, false));
+                }
+                pane.getChildren().add(row);
             }
-            pane.getChildren().add(row);
         }
     }
 
