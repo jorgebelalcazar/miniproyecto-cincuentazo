@@ -70,3 +70,107 @@
     -fx-text-fill: #f1c40f;
     -fx-text-alignment: center;
 }
+/* ================================================================
+   GAME VIEW STYLES
+================================================================ */
+
+/* ============== GAME ROOT ============== */
+.game-root {
+    -fx-background-color: linear-gradient(to bottom, #0d2818, #1a4d33);
+    -fx-font-family: "Segoe UI", "Arial", sans-serif;
+}
+
+/* ============== OPPONENT AREAS ============== */
+.opponent-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f1c40f;
+}
+
+.opponent-pane {
+    -fx-background-color: rgba(0, 0, 0, 0.2);
+    -fx-background-radius: 8;
+    -fx-border-color: rgba(241, 196, 15, 0.3);
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+}
+
+/* ============== TABLE AREA (CENTER) ============== */
+.table-area {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 70%, #1e5a3a, #14402a);
+    -fx-background-radius: 15;
+    -fx-border-color: #b8860b;
+    -fx-border-width: 3;
+    -fx-border-radius: 15;
+}
+
+.sum-caption {
+    -fx-font-size: 14px;
+    -fx-text-fill: #d5dbdb;
+}
+
+.sum-value {
+    -fx-font-size: 48px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f1c40f;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 4, 0, 0, 2);
+}
+
+.zone-caption {
+    -fx-font-size: 12px;
+    -fx-text-fill: #d5dbdb;
+}
+
+/* ============== CARD SLOTS ============== */
+.card-slot {
+    -fx-min-width: 70;
+    -fx-min-height: 100;
+    -fx-pref-width: 70;
+    -fx-pref-height: 100;
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+    -fx-background-radius: 8;
+    -fx-border-color: rgba(255, 255, 255, 0.2);
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+}
+
+.deck-slot {
+    -fx-background-color: rgba(52, 73, 94, 0.6);
+}
+
+/* ============== HUMAN AREA (BOTTOM) ============== */
+.human-area {
+    -fx-background-color: rgba(0, 0, 0, 0.25);
+}
+
+.hand-caption {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f1c40f;
+}
+
+.hand-box {
+    -fx-min-height: 110;
+    -fx-padding: 5;
+}
+
+/* ============== SECONDARY BUTTON ============== */
+.secondary-button {
+    -fx-background-color: #7f8c8d;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #95a5a6;
+}
+
+/* ============== STATUS (reused) ============== */
+.status {
+    -fx-font-size: 14px;
+    -fx-text-fill: #f1c40f;
+    -fx-text-alignment: center;
+}

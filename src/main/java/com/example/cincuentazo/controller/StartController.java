@@ -66,16 +66,13 @@ public class StartController implements Initializable {
     }
 
     /**
-     * Handles the start button action. In this phase it only reports the
-     * selected number of opponents. In a later phase it will request the
-     * transition to the game view.
+     * Handles the start button action by requesting the game view, passing
+     * the selected number of machine opponents.
      */
     private void handleStartGame() {
         int selectedOpponents = getSelectedOpponents();
-        statusLabel.setText(
-                "Juego configurado para " + selectedOpponents
-                        + " jugador(es) maquina. "
-        );
+        com.example.cincuentazo.view.ViewManager.getInstance()
+                .showGameView(selectedOpponents);
     }
 
     /**
