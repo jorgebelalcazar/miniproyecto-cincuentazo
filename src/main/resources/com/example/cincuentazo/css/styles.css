@@ -229,3 +229,21 @@
     -fx-font-weight: bold;
     -fx-text-fill: #f1c40f;
 }
+
+/* ============== COMPACT CARD (side opponents) ============== */
+.card-compact {
+    -fx-min-width: 40;
+    -fx-min-height: 60;
+    -fx-pref-width: 40;
+    -fx-pref-height: 60;
+    -fx-max-width: 40;
+    -fx-max-height: 60;
+}
+
+.card-compact .card-back-symbol {
+    -fx-font-size: 18px;
+}
+
+.card-compact .card-back-symbol {
+    -fx-font-size: 18px;
+}

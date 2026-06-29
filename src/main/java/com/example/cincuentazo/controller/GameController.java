@@ -200,11 +200,11 @@ public class GameController implements Initializable, CardClickListener {
             int handSize = machinePlayers.get(i).getHandSize();
 
             if (isSidePane) {
-                // Side opponents: stack cards vertically
-                javafx.scene.layout.VBox column = new javafx.scene.layout.VBox(5);
+                // Side opponents: stack cards vertically (compact size to fit)
+                javafx.scene.layout.VBox column = new javafx.scene.layout.VBox(4);
                 column.setAlignment(javafx.geometry.Pos.CENTER);
                 for (int c = 0; c < handSize; c++) {
-                    column.getChildren().add(new CardView(null, false));
+                    column.getChildren().add(new CardView(null, false, true));
                 }
                 pane.getChildren().add(column);
             } else {

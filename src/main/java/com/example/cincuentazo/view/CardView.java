@@ -26,14 +26,28 @@ public class CardView extends StackPane {
     private final Card card;
 
     /**
-     * Creates a card view.
+     * Creates a card view with the default (full) size.
      *
-     * @param card     the card to represent
-     * @param faceUp   {@code true} to show the card face, {@code false} for back
+     * @param card   the card to represent
+     * @param faceUp {@code true} to show the card face, {@code false} for back
      */
     public CardView(Card card, boolean faceUp) {
+        this(card, faceUp, false);
+    }
+
+    /**
+     * Creates a card view, optionally in a compact size for side opponents.
+     *
+     * @param card    the card to represent
+     * @param faceUp  {@code true} to show the card face, {@code false} for back
+     * @param compact {@code true} to render a smaller card
+     */
+    public CardView(Card card, boolean faceUp, boolean compact) {
         this.card = card;
         getStyleClass().add("card-view");
+        if (compact) {
+            getStyleClass().add("card-compact");
+        }
         if (faceUp && card != null) {
             renderFaceUp();
         } else {
