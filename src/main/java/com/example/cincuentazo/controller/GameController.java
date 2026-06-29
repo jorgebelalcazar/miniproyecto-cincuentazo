@@ -208,11 +208,11 @@ public class GameController implements Initializable, CardClickListener {
                 }
                 pane.getChildren().add(column);
             } else {
-                // Top opponent: stack cards horizontally
+                // Top opponent: stack cards horizontally (compact size to match sides)
                 HBox row = new HBox(5);
                 row.setAlignment(javafx.geometry.Pos.CENTER);
                 for (int c = 0; c < handSize; c++) {
-                    row.getChildren().add(new CardView(null, false));
+                    row.getChildren().add(new CardView(null, false, true));
                 }
                 pane.getChildren().add(row);
             }

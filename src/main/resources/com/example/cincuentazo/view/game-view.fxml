@@ -27,7 +27,7 @@
                 <Button fx:id="backButton" text="Volver" styleClass="secondary-button"/>
             </HBox>
             <Label text="Maquina 2" styleClass="opponent-label"/>
-            <Pane fx:id="topOpponentPane" styleClass="opponent-pane" prefHeight="90"/>
+            <StackPane fx:id="topOpponentPane" styleClass="opponent-pane" prefHeight="80"/>
         </VBox>
     </top>
 
